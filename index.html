@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📖 My Book Tracker</title>
+  </head>
+  <body class="font-sans bg-cream-100 text-sage-900 min-h-screen">
+    <header class="bg-sage-600 text-cream-50 shadow-md">
+      <div class="max-w-3xl mx-auto px-6 py-8">
+        <h1 class="font-serif text-4xl text-cream-100 mb-6 tracking-wide">
+          📖 My Book Tracker
+        </h1>
+
+        <div id="search-bar" class="flex items-center gap-2 mb-6">
+          <input
+            type="search"
+            id="book-search"
+            name="book-search"
+            placeholder="Search Book..."
+            class="flex-1 bg-sage-700 text-cream-100 placeholder-sage-300 border border-sage-500 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cream-300 transition"
+          />
+          <button
+            class="btn search-btn bg-cream-200 text-sage-800 hover:bg-cream-300 rounded-lg px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-cream-300"
+            aria-label="Search"
+          >
+            🔎
+          </button>
+        </div>
+
+        <div id="new-book">
+          <button
+            class="btn add-btn bg-clay-400 hover:bg-clay-500 text-cream-50 rounded-lg px-5 py-2 text-sm font-bold tracking-wide transition focus:outline-none focus:ring-2 focus:ring-clay-300"
+          >
+            + Add New Book
+          </button>
+
+          <form
+            id="new-book-form"
+            class="hidden mt-6 bg-cream-50 text-sage-900 rounded-2xl p-6 shadow-lg border border-cream-200 max-w-md"
+          >
+            <h3 class="font-serif text-2xl text-sage-700 mb-5">
+              Add a New Book
+            </h3>
+
+            <div class="mb-4">
+              <label
+                for="title"
+                class="block text-xs font-bold uppercase tracking-widest text-sage-500 mb-1"
+              >
+                Title
+              </label>
+              <input
+                type="text"
+                name="title"
+                id="title"
+                class="w-full border border-cream-300 bg-cream-50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-400 transition"
+              />
+            </div>
+
+            <div class="mb-4">
+              <label
+                for="author"
+                class="block text-xs font-bold uppercase tracking-widest text-sage-500 mb-1"
+              >
+                Author
+              </label>
+              <input
+                type="text"
+                name="author"
+                id="author"
+                class="w-full border border-cream-300 bg-cream-50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-400 transition"
+              />
+            </div>
+
+            <div class="mb-4">
+              <label
+                for="status"
+                class="block text-xs font-bold uppercase tracking-widest text-sage-500 mb-1"
+              >
+                Status
+              </label>
+              <select
+                name="status"
+                id="status"
+                class="w-full border border-cream-300 bg-cream-50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage-400 transition"
+              >
+                <option value="to-read">To Read</option>
+                <option value="reading">Reading</option>
+                <option value="read">Read</option>
+              </select>
+            </div>
+
+            <div class="mb-6">
+              <label
+                class="block text-xs font-bold uppercase tracking-widest text-sage-500 mb-2"
+              >
+                Rating
+              </label>
+              <div class="rating flex flex-row-reverse justify-end gap-1">
+                <span
+                  data-value="5"
+                  class="text-2xl cursor-pointer text-cream-300 hover:text-clay-400 transition select-none"
+                  aria-label="5 stars"
+                  >★</span
+                >
+                <span
+                  data-value="4"
+                  class="text-2xl cursor-pointer text-cream-300 hover:text-clay-400 transition select-none"
+                  aria-label="4 stars"
+                  >★</span
+                >
+                <span
+                  data-value="3"
+                  class="text-2xl cursor-pointer text-cream-300 hover:text-clay-400 transition select-none"
+                  aria-label="3 stars"
+                  >★</span
+                >
+                <span
+                  data-value="2"
+                  class="text-2xl cursor-pointer text-cream-300 hover:text-clay-400 transition select-none"
+                  aria-label="2 stars"
+                  >★</span
+                >
+                <span
+                  data-value="1"
+                  class="text-2xl cursor-pointer text-cream-300 hover:text-clay-400 transition select-none"
+                  aria-label="1 star"
+                  >★</span
+                >
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn submit-btn w-full bg-sage-500 hover:bg-sage-600 text-cream-100 rounded-lg px-5 py-2 text-sm font-bold tracking-wide transition focus:outline-none focus:ring-2 focus:ring-sage-400"
+            >
+              + Add New Book
+            </button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-6 py-10">
+      <ul id="book-list" class="grid grid-cols-1 sm:grid-cols-2 gap-5"></ul>
+    </main>
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
