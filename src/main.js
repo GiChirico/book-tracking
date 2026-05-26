@@ -1,5 +1,3 @@
-import './style.css';
-
 // HTML elements
 const newBookBtn = document.querySelector('.add-btn');
 const newBookForm = document.getElementById('new-book-form');
@@ -12,14 +10,12 @@ let books = [];
 // star rating
 
 let selectedRating;
-function starRating() {
+
+function starRating(value) {
+  selectedRating = value;
   stars.forEach(star => {
-    console.log('IT WORKS');
-    star.addEventListener('click', function () {
-      selectedRating = star.getAttribute('data-value');
-      console.log(selectedRating);
-      star.classList.add('selected');
-    });
+    const starValue = star.dataset.value;
+    star.classList.toggle('selected', starValue <= selectedRating);
   });
 }
 
@@ -32,9 +28,9 @@ function getLocalStorage() {
 
   books = data;
 
-  books.forEach(book => {
-    displayBooks(book);
-  });
+  console.log(books);
+
+  renderBooks();
 }
 getLocalStorage();
 
@@ -42,9 +38,7 @@ getLocalStorage();
 function setLocalStorage() {
   localStorage.setItem('books', JSON.stringify(books));
   // display books
-  books.forEach(book => {
-    displayBooks(book);
-  });
+  renderBooks();
 }
 
 class Book {
@@ -80,7 +74,7 @@ function newBook() {
   setLocalStorage();
 }
 
-// display book list
+// create book card
 function displayBooks(book) {
   function ratingIntoStars() {
     switch (book.rating) {
@@ -96,6 +90,8 @@ function displayBooks(book) {
         return '⭐️⭐️⭐️⭐️⭐️';
     }
   }
+
+  // create book card
   let html = `
   <li class="book-card bg-cream-50 border border-cream-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition" data-id="${book.id}">
     <h3 class="font-serif text-xl text-sage-800 mb-1">${book.title}</h3>
@@ -117,6 +113,12 @@ function displayBooks(book) {
   bookList.insertAdjacentHTML('beforeend', html);
 }
 
+// render books list
+function renderBooks() {
+  bookList.innerHTML = '';
+  books.forEach(book => displayBooks(book));
+}
+
 // edit book
 function editBook(e) {
   // get the book card element and id
@@ -128,7 +130,7 @@ function editBook(e) {
 
   //open form again
   newBookForm.classList.remove('hidden');
-  starRating();
+  starRating(books[bookIndex].rating);
 
   // get data from form
   const title = document.getElementById('title').value;
@@ -146,8 +148,8 @@ function editBook(e) {
   // replace book object
   books.splice(bookIndex, 1, book);
 
-  // display book on the list
-  displayBooks(book);
+  // render books
+  renderBooks();
 
   // set local storage
   setLocalStorage();
@@ -175,15 +177,21 @@ function deleteBook(e) {
 function formReset() {
   newBookForm.reset();
   selectedRating = 0;
-  stars.forEach(s => s.classList.remove('selected'));
+  starRating(0);
 }
 
 // event listeners
+stars.forEach(star => {
+  star.addEventListener('click', function () {
+    starRating(star.dataset.value);
+  });
+});
+
 newBookBtn.addEventListener('click', function () {
   console.log('works');
 
   newBookForm.classList.remove('hidden');
-  starRating();
+  starRating(0);
 });
 
 newBookForm.addEventListener('submit', function (e) {
