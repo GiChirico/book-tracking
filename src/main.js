@@ -52,6 +52,7 @@ class Book {
 }
 
 // functions
+
 // new book object
 function newBook() {
   // get data from form
@@ -74,24 +75,19 @@ function newBook() {
   setLocalStorage();
 }
 
-// create book card
-function displayBooks(book) {
-  function ratingIntoStars() {
-    switch (book.rating) {
-      case '1':
-        return '⭐️';
-      case '2':
-        return '⭐️⭐️';
-      case '3':
-        return '⭐️⭐️⭐️';
-      case '4':
-        return '⭐️⭐️⭐️⭐️';
-      case '5':
-        return '⭐️⭐️⭐️⭐️⭐️';
-    }
+// convert rating number into stars
+function ratingIntoStars(rating) {
+  const numberRating = +rating;
+  let result = '';
+  for (let i = 1; i <= 5; i++) {
+    const color = i <= numberRating ? '#C38B74' : '#D9E2D3';
+    result += `<span style="color: ${color}">★</span>`;
   }
+  return result;
+}
 
-  // create book card
+// create book card
+function createBookCard(book) {
   let html = `
   <li class="book-card bg-cream-50 border border-cream-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition" data-id="${book.id}">
     <h3 class="font-serif text-xl text-sage-800 mb-1">${book.title}</h3>
@@ -99,7 +95,7 @@ function displayBooks(book) {
     <p class="text-xs font-bold uppercase tracking-widest text-clay-400 mb-1">
       Status: ${book.bookStatus[0].toUpperCase()}${book.bookStatus.slice(1)}
     </p>
-    <p class="text-sm text-sage-600 mb-4">Rating: ${ratingIntoStars()}</p>
+    <p class="text-sm text-sage-600 mb-4">Rating: ${ratingIntoStars(book.rating)}</p>
     <div class="actions flex gap-2">
       <button class="edit flex-1 bg-sage-100 hover:bg-sage-200 text-sage-700 text-xs font-bold uppercase tracking-widest rounded-lg py-2 transition focus:outline-none focus:ring-2 focus:ring-sage-400">
         Edit
@@ -116,7 +112,7 @@ function displayBooks(book) {
 // render books list
 function renderBooks() {
   bookList.innerHTML = '';
-  books.forEach(book => displayBooks(book));
+  books.forEach(book => createBookCard(book));
 }
 
 // edit book
