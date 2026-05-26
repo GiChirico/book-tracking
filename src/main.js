@@ -121,38 +121,23 @@ function renderBooks() {
 
 // edit book
 function editBook(e) {
-  // get the book card element and id
   const bookCard = e.target.closest('.book-card');
   const bookID = bookCard.dataset.id;
+  const bookIndex = books.findIndex(b => b.id === bookID);
+  const book = books[bookIndex];
 
-  // find index and edit
-  const bookIndex = books.findIndex(book => book.id === bookID);
+  // pre-fill the form
+  document.getElementById('title').value = book.title;
+  document.getElementById('author').value = book.author;
+  document.getElementById('status').value = book.bookStatus;
+  starRating(book.rating);
 
-  //open form again
+  // remove the book
+  books.splice(bookIndex, 1);
+  bookCard.remove();
+
+  // open the form
   newBookForm.classList.remove('hidden');
-  starRating(books[bookIndex].rating);
-
-  // get data from form
-  const title = document.getElementById('title').value;
-  const author = document.getElementById('author').value;
-  const bookStatus = document.getElementById('status').value;
-  const rating = selectedRating;
-  // creates a random id
-  const id = bookID;
-
-  let book;
-
-  // create new book object
-  book = new Book(title, author, bookStatus, rating, id);
-
-  // replace book object
-  books.splice(bookIndex, 1, book);
-
-  // render books
-  renderBooks();
-
-  // set local storage
-  setLocalStorage();
 }
 
 // delete book
