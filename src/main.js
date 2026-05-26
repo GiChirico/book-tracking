@@ -6,6 +6,16 @@ const bookList = document.getElementById('book-list');
 
 // Books class
 let books = [];
+class Book {
+  constructor(title, author, bookStatus, rating, coverURL, id) {
+    ((this.title = title),
+      (this.author = author),
+      (this.bookStatus = bookStatus),
+      (this.rating = rating),
+      (this.coverURL = coverURL),
+      (this.id = id));
+  }
+}
 
 // star rating
 
@@ -41,32 +51,66 @@ function setLocalStorage() {
   renderBooks();
 }
 
-class Book {
-  constructor(title, author, bookStatus, rating, id) {
-    ((this.title = title),
-      (this.author = author),
-      (this.bookStatus = bookStatus),
-      (this.rating = rating),
-      (this.id = id));
+// functions
+
+// fetch cover url
+async function fetchCoverURL(title, author) {
+  try {
+    const formattedTitle = title.toLowerCase().replaceAll(' ', '+');
+    const formattedAuthor = author.toLowerCase().replaceAll(' ', '+');
+    const response = await fetch(
+      `https://openlibrary.org/search.json?title=${formattedTitle}&author=${formattedAuthor}&limit=1`,
+    );
+    if (!response.ok) throw new Error('Failed to fetch cover image');
+
+    const data = await response.json();
+    if (!data.docs || data.docs.length === 0)
+      throw new Error('No results found for the given title and author');
+
+    const coverID = data.docs[0].cover_i;
+    if (!coverID)
+      throw new Error('No cover image found for the given title and author');
+
+    const coverURL = `https://covers.openlibrary.org/b/id/${coverID}-S.jpg`;
+
+    return coverURL;
+  } catch (error) {
+    console.error(`Error fetching cover URL: ${error.message}`);
+    return null;
   }
 }
 
-// functions
-
 // new book object
-function newBook() {
+async function newBook() {
   // get data from form
   const title = document.getElementById('title').value;
   const author = document.getElementById('author').value;
   const bookStatus = document.getElementById('status').value;
   const rating = selectedRating;
+
   // creates a random id
   const id = crypto.randomUUID();
 
-  let book;
+  // skeleton card
+  const skeleton = `
+    <li class="skeleton-card bg-parchment-100 border border-parchment-400 rounded-2xl p-5 flex gap-4" data-skeleton-id="${id}">
+      <div class="w-16 h-24 rounded-lg shrink-0 bg-sage-100 animate-pulse"></div>
+      <div class="flex flex-col flex-1 gap-3">
+        <div class="h-6 bg-sage-100 rounded animate-pulse w-3/4"></div>
+        <div class="h-4 bg-sage-100 rounded animate-pulse w-1/2"></div>
+        <div class="h-4 bg-sage-100 rounded animate-pulse w-1/4"></div>
+      </div>
+    </li>`;
+  bookList.insertAdjacentHTML('beforeend', skeleton);
+
+  // fetch cover url
+  const coverURL = await fetchCoverURL(title, author);
+
+  // remove skeleton
+  document.querySelector(`[data-skeleton-id="${id}"]`).remove();
 
   // create new book object
-  book = new Book(title, author, bookStatus, rating, id);
+  const book = new Book(title, author, bookStatus, rating, coverURL, id);
 
   // add book to books array
   books.push(book);
@@ -88,21 +132,24 @@ function ratingIntoStars(rating) {
 
 // create book card
 function createBookCard(book) {
-  let html = `
-  <li class="book-card bg-cream-50 border border-cream-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition" data-id="${book.id}">
-    <h3 class="font-serif text-xl text-sage-800 mb-1">${book.title}</h3>
-    <p class="text-sm text-sage-500 mb-3">${book.author}</p>
-    <p class="text-xs font-bold uppercase tracking-widest text-clay-400 mb-1">
-      Status: ${book.bookStatus[0].toUpperCase()}${book.bookStatus.slice(1)}
-    </p>
-    <p class="text-sm text-sage-600 mb-4">Rating: ${ratingIntoStars(book.rating)}</p>
-    <div class="actions flex gap-2">
-      <button class="edit flex-1 bg-sage-100 hover:bg-sage-200 text-sage-700 text-xs font-bold uppercase tracking-widest rounded-lg py-2 transition focus:outline-none focus:ring-2 focus:ring-sage-400">
-        Edit
-      </button>
-      <button class="delete flex-1 bg-clay-100 hover:bg-clay-200 text-clay-500 text-xs font-bold uppercase tracking-widest rounded-lg py-2 transition focus:outline-none focus:ring-2 focus:ring-clay-300">
-        Delete
-      </button>
+  const coverImg = book.coverURL
+    ? `<img src="${book.coverURL}" alt="${book.title} cover" class="w-16 h-24 object-cover rounded-lg shrink-0">`
+    : `<div class="w-16 h-24 rounded-lg shrink-0 bg-sage-100 border border-sage-300 flex items-center justify-center text-sage-400 font-display text-xl animate-pulse">
+      ${book.title[0].toUpperCase()}
+    </div>`;
+
+  const html = `
+  <li class="book-card bg-parchment-100 border border-parchment-400 rounded-2xl p-5 shadow-sm hover:shadow-md transition flex gap-4" data-id="${book.id}">
+    ${coverImg}
+    <div class="flex flex-col flex-1">
+      <h3 class="font-display text-2xl text-bark-700 mb-1">${book.title}</h3>
+      <p class="italic text-bark-400 text-base mb-3">${book.author}</p>
+      <p class="font-display text-base text-bark-300 mb-1">${book.bookStatus}</p>
+      <p class="text-lg mb-4">${ratingIntoStars(book.rating)}</p>
+      <div class="actions flex gap-2 mt-auto">
+        <button class="edit font-display text-lg flex-1 bg-parchment-300 hover:bg-parchment-400 text-bark-600 rounded-lg py-2 transition focus:outline-none focus:ring-2 focus:ring-bark-400">edit</button>
+        <button class="delete font-display text-lg flex-1 bg-terra-100 hover:bg-terra-200 text-terra-600 rounded-lg py-2 transition focus:outline-none focus:ring-2 focus:ring-terra-300">delete</button>
+      </div>
     </div>
   </li>`;
 
